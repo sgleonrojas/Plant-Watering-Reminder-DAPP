@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAST's Plant Care</title>
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <style>
+ .reminder-container {
+  position: fixed;
+  top: 20px; /* Adjust as needed */
+  left: 20px; /* Adjust as needed */
+  padding: 10px 20px; /* Adjust padding */
+  border: 2px solid #007bff; /* Blue border color */
+  border-radius: 5px;
+  background-color: #007bff; /* Blue background color */
+  color: #fff; /* White text color */
+  width: 300px; /* Adjust width as needed */
+  z-index: 1001; /* Ensure it's above the popup */
+}
+
+.reminder-popup {
+  position: fixed;
+  top: calc(60px + 40px); /* Adjust as needed (20px for container height + 20px for spacing) */
+  left: 20px; /* Adjust as needed */
+  background-color: #fff;
+  border: 2px solid #007bff; /* Blue border color */
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 300px; /* Adjust width as needed */
+  z-index: 1000; /* Ensure it's above other elements */
+
+  /* Center image using flexbox */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.reminder-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+
+.reminder-popup img {
+  width: 100px; /* Adjust image size as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-right: 20px;
+  margin-left: 20px;
+
+}
+
+.btn-register {
+  border-radius: 20px;
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+  color: #fff;
+  transition: background-color 0.3s;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.btn-register:hover {
+  background-color: #4cae4c;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-push-2">
+        <h1 class="text-center">FAST's Plant Care</h1>
+        <hr>
+        <br>
+      </div>
+    </div>
+
+    <div id="petsRow" class="row">
+      <!-- PETS LOAD HERE -->
+    </div>
+  </div>
+
+  <div id="petTemplate" style="display: none;">
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="panel panel-default panel-pet">
+        <div class="panel-heading">
+          <h3 class="panel-title">Scrappy</h3>
+        </div>
+        <div class="panel-body">
+          <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg" data-holder-rendered="true">
+          <br><br>
+         
+          <strong>Species</strong>: <span class="pet-breed">Golden Retriever</span><br>
+          <strong>Water at</strong>: <span class="pet-age">3</span><strong>  every Day</strong><br>
+          <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br><br>
+          <button class="btn btn-default btn-adopt" type="button" data-id="0">Water Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Button -->
+  <button id="registerButton" class="btn btn-register" type="button" data-toggle="modal" data-target="#registerModal">Register a Plant</button>
+
+  
+
+  <div id="reminderContainer" class="reminder-container">
+    <h2 class="reminder-title">Reminders</h2>
+  </div>
+  
+  
+  <!-- Modal Form -->
+  <div id="registerModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Register a Plant</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="plantForm" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="plantName">Name:</label>
+              <input type="text" class="form-control" id="plantName" required>
+            </div>
+            <div class="form-group">
+              <label for="plantPicture">Picture:</label>
+              <input type="file" class="form-control" id="plantPicture" accept="image/*" required >
+            </div>
+            <div class="form-group">
+              <label for="plantAge">Schedule every 24 hours </label>
+              <input type="text" class="form-control" id="plantAge" required placeholder="Enter schedule in 24-hour clock (e.g., 13:30)">
+            </div>
+            <div class="form-group">
+              <label for="plantBreed">Species:</label>
+              <input type="text" class="form-control" id="plantBreed" required >
+            </div>
+            <div class="form-group">
+              <label for="plantLocation">Location:</label>
+              <input type="text" class="form-control" id="plantLocation" required>
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/web3.min.js"></script>
+  <script src="js/truffle-contract.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
