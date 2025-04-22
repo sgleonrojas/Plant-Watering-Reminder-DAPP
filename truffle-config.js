@@ -8,7 +8,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.8.20",  // Use the correct Solidity version
+      version: "0.5.16",  // Use the correct Solidity version
     }
   }
 };
