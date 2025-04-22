@@ -36,10 +36,9 @@ App = {
       });
     });
 
-    // Periodically fetch reminders (every 10 seconds in this example)
+    // Periodically fetch reminders (every 20 seconds)
     setInterval(App.fetchReminders, 20000);
   },
-
 
   initWeb3: async function() {
     // Modern dapp browsers...
@@ -85,7 +84,6 @@ App = {
   bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
     $(document).on('click', '.btn-success', App.handleSubmit);
-
   },
 
   markAdopted: function() {
@@ -99,14 +97,13 @@ App = {
       console.log("Adopters:", adopters);
       for (i = 0; i < adopters.length; i++) {
         if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-          console.log("maradopted",adopters[i],i);
+          console.log("maradopted", adopters[i], i);
           $('.panel-pet').eq(i).find('button').text('Watered').attr('disabled', true);
         }
       }
     }).catch(function(err) {
       console.log(err.message);
     });
-
   },
 
   handleAdopt: function(event) {
@@ -117,87 +114,85 @@ App = {
     var adoptionInstance;
 
     web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+
+      App.contracts.Adoption.deployed().then(function(instance) {
+        adoptionInstance = instance;
+
+        // Execute adopt as a transaction by sending account
+        return adoptionInstance.adopt(petId, { from: account });
+      }).then(function(result) {
+        // Call markAdopted after the adoption transaction is confirmed
+        return App.markAdopted();
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
+  fetchReminders: async function() {
+    try {
+      // Fetch reminders from the backend (Flask server)
+      const response = await fetch('http://localhost:5000/get_reminders');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch reminders');
+      }
+
+      // Parse the JSON response
+      const data = await response.json();
+      
+      // Get the current account from Web3
+      web3.eth.getAccounts(function(error, accounts) {
         if (error) {
-            console.log(error);
+          console.error('Error fetching accounts:', error);
+          return;
         }
 
         var account = accounts[0];
 
-        App.contracts.Adoption.deployed().then(function(instance) {
-            adoptionInstance = instance;
+        try {
+          data.forEach(function(reminder) {
+            // Check if the reminder's account matches the current account
+            if (reminder.account === account) {
+              // Create a div element for the reminder popup
+              var reminderPopup = document.createElement('div');
+              reminderPopup.classList.add('reminder-popup');
 
-            // Execute adopt as a transaction by sending account
-            return adoptionInstance.adopt(petId, { from: account });
-        }).then(function(result) {
-            // Call markAdopted after the adoption transaction is confirmed
-            return App.markAdopted();
-        }).catch(function(err) {
-            console.log(err.message);
-        });
-    });
-},
+              // Create HTML elements to display reminder information
+              var name = document.createElement('p');
+              name.textContent = 'Name: ' + reminder.name;
 
-  fetchReminders: async function() {
-    try {
-        // Fetch data from the backend
-        const response = await fetch('http://localhost:5000/get_reminders');
-        
-        // Check if the response is successful
-        if (!response.ok) {
-            throw new Error('Failed to fetch reminders');
+              var location = document.createElement('p');
+              location.textContent = 'Location: ' + reminder.location;
+
+              var img = document.createElement('img');
+              img.src = reminder.picture; // Assuming 'picture' contains the image URL
+              img.alt = reminder.name; // Set alt text to the name of the plant
+
+              // Append elements to the reminder popup
+              reminderPopup.appendChild(img);
+              reminderPopup.appendChild(name);
+              reminderPopup.appendChild(location);
+
+              // Append the reminder popup to the left side of the screen
+              document.body.appendChild(reminderPopup);
+            }
+          });
+        } catch (error) {
+          console.error('Error processing reminders:', error);
         }
-        
-        // Parse the JSON response
-        const data = await response.json();
-        
-        // Process the fetched data
-        console.log('Reminders:', data);
-        web3.eth.getAccounts(function(error, accounts) {
-            if (error) {
-                console.error('Error fetching accounts:', error);
-                return;
-            }
-        
-            var account = accounts[0];
-            
-            try {
-                data.forEach(function(reminder) {
-                    // Check if the reminder's account matches the current account
-                    if (reminder.account == account) {
-                        // Create a div element for the reminder popup
-                        var reminderPopup = document.createElement('div');
-                        reminderPopup.classList.add('reminder-popup');
-        
-                        // Create HTML elements to display reminder information
-                        var name = document.createElement('p');
-                        name.textContent = 'Name: ' + reminder.name;
-        
-                        var location = document.createElement('p');
-                        location.textContent = 'Location: ' + reminder.location;
-        
-                        var img = document.createElement('img');
-                        img.src = reminder.picture; // Assuming 'picture' contains the image URL
-                        img.alt = reminder.name; // Set alt text to the name of the plant
-        
-                        // Append elements to the reminder popup
-                        reminderPopup.appendChild(img);
-                        reminderPopup.appendChild(name);
-                        reminderPopup.appendChild(location);
-        
-                        // Append the reminder popup to the left side of the screen
-                        document.body.appendChild(reminderPopup);
-                    }
-                });
-            } catch (error) {
-                console.error('Error processing reminders:', error);
-            }
-        });
+      });
     } catch (error) {
-        console.error('Error fetching reminders:', error);
+      console.error('Error fetching reminders:', error);
     }
-},
-  
-  resetAndCloseForm:function () {
+  },
+
+  resetAndCloseForm: function() {
     // Reset the form
     $('#plantForm')[0].reset();
 
@@ -213,17 +208,13 @@ App = {
     fetch('http://localhost:5000/total_pets')
       .then(response => response.json())
       .then(data => {
-        // Calculate new id
-        var newId = data.totalPets ;
+        var newId = data.totalPets;
 
-        // Collect form data
         var form = document.getElementById('plantForm');
-
-        // Create a new FormData object and pass the form element to it
         var formData = new FormData(form);
+
         console.log('Form data:', formData);
 
-        // Get the current Ethereum account address
         web3.eth.getAccounts(function(error, accounts) {
           if (error) {
             console.log(error);
@@ -231,15 +222,15 @@ App = {
 
           var account = accounts[0]; // Assuming the first account is the one logged in
 
-          // Create petData object
           var petData = {
-            id: newId, // Generate unique ID for the new plant
-            name: $('#plantName').val(), // Get the value of the input field directly
-            age: $('#plantAge').val(), // Parse age to integer directly
-            breed: $('#plantBreed').val(), // Get the value of the input field directly
-            location: $('#plantLocation').val(), // Get the value of the input field directly
-            account: account // Store the account address
+            id: newId,
+            name: $('#plantName').val(),
+            age: $('#plantAge').val(),
+            breed: $('#plantBreed').val(),
+            location: $('#plantLocation').val(),
+            account: account
           };
+
           console.log(petData);
           const schedule = petData.age.split(':');
           if (schedule.length != 2 || isNaN(parseInt(schedule[0])) || isNaN(parseInt(schedule[1]))) {
@@ -253,15 +244,13 @@ App = {
             return false;
           }
 
-          // Save the uploaded image and update the picture path
-          var pictureFile = $('#plantPicture')[0].files[0]; // Access the file object directly
+          var pictureFile = $('#plantPicture')[0].files[0];
           var reader = new FileReader();
           reader.onloadend = function() {
-            petData.picture = reader.result; // Set the image data URI as the picture path
+            petData.picture = reader.result;
 
             console.log('Sending data to server...');
 
-            // Send pet data to the Flask server
             fetch('http://localhost:5000/add_pet', {
               method: 'POST',
               headers: {
@@ -270,30 +259,22 @@ App = {
               body: JSON.stringify(petData)
             })
               .then(response => {
-                console.log('Server response:', response);
                 if (response.ok) {
                   console.log('Pet added successfully');
                   App.contracts.Adoption.deployed().then(function(instance) {
                     adoptionInstance = instance;
 
-                    // Execute adopt as a transaction by sending account
                     return adoptionInstance.handleSubmit(petData.id, {
                       from: account,
-                      gas: 300000, // Set gas limit
-                      gasPrice: '20000000000' // Set gas price (wei)
+                      gas: 300000,
+                      gasPrice: '20000000000'
                     });
-
                   }).then(function(result) {
-                    // Wait for transaction confirmation
-                    
-                        console.log("Transaction confirmed:", result);
-                        // Reload the page or show success message
-                        window.location.reload(); // Reload the page after successful addition
-                      
+                    console.log("Transaction confirmed:", result);
+                    window.location.reload();
                   }).catch(function(err) {
                     console.log(err.message);
                   });
-
                 } else {
                   console.error('Failed to add pet:', response.statusText);
                 }
@@ -310,7 +291,7 @@ App = {
         console.error('Error fetching total pets:', error);
       });
   },
-}
+};
 
 $(function() {
   $(window).load(function() {
