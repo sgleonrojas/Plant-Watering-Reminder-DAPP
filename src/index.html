@@ -23,7 +23,7 @@
 
     .reminder-popup {
       position: fixed;
-      top: calc(60px + 40px);
+      top: 100px;
       left: 20px;
       background-color: #fff;
       border: 2px solid #007bff;
@@ -32,22 +32,19 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       width: 300px;
       z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     .reminder-title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: bold;
-      text-align: center;
+      margin-bottom: 10px;
     }
 
     .reminder-popup img {
-      width: 100px;
-      height: auto;
-      margin-right: 20px;
-      margin-left: 20px;
+      width: 100%;
+      max-width: 120px;
+      display: block;
+      margin: 0 auto 10px auto;
     }
 
     .btn-register {
@@ -72,10 +69,9 @@
 <body>
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 col-sm-8 col-sm-push-2">
-        <h1 class="text-center">FAST's Plant Care</h1>
-        <hr>
-        <br>
+      <div class="col-xs-12 col-sm-8 col-sm-push-2 text-center">
+        <h1>FAST's Plant Care</h1>
+        <hr><br>
         <!-- Wallet Connection Button -->
         <button id="connectWallet" class="btn btn-primary">Connect Wallet</button>
         <p id="walletAddress">Not connected</p>
@@ -83,22 +79,23 @@
     </div>
 
     <div id="petsRow" class="row">
-      <!-- PETS LOAD HERE -->
+      <!-- Pets load here -->
     </div>
   </div>
 
+  <!-- Template -->
   <div id="petTemplate" style="display: none;">
     <div class="col-sm-6 col-md-4 col-lg-3">
       <div class="panel panel-default panel-pet">
         <div class="panel-heading">
-          <h3 class="panel-title">Scrappy</h3>
+          <h3 class="panel-title">[Plant Name]</h3>
         </div>
-        <div class="panel-body">
-          <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;" src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg">
+        <div class="panel-body text-center">
+          <img alt="Plant Image" class="img-rounded img-center" style="width: 100%;" src="">
           <br><br>
-          <strong>Species</strong>: <span class="pet-breed">Golden Retriever</span><br>
-          <strong>Water at</strong>: <span class="pet-age">3</span><strong> every Day</strong><br>
-          <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br><br>
+          <strong>Species</strong>: <span class="pet-breed">Unknown</span><br>
+          <strong>Water at</strong>: <span class="pet-age">--:--</span><strong> each day</strong><br>
+          <strong>Location</strong>: <span class="pet-location">Unknown</span><br><br>
           <button class="btn btn-default btn-adopt" type="button" data-id="0">Water Now</button>
         </div>
       </div>
@@ -108,10 +105,10 @@
   <!-- Register Button -->
   <button id="registerButton" class="btn btn-register" type="button" data-toggle="modal" data-target="#registerModal">Register a Plant</button>
 
-  <!-- Reminder Container -->
+  <!-- Reminders Container -->
   <div id="reminders-container" class="reminder-container">
     <h2 class="reminder-title">Reminders</h2>
-    <!-- Reminder items will be appended here -->
+    <!-- Popups dynamically added here -->
   </div>
 
   <!-- Modal Form -->
@@ -128,23 +125,23 @@
           <form id="plantForm" enctype="multipart/form-data">
             <div class="form-group">
               <label for="plantName">Name:</label>
-              <input type="text" class="form-control" id="plantName" placeholder="Enter plant name">
+              <input type="text" class="form-control" id="plantName" required>
             </div>
             <div class="form-group">
-              <label for="plantAge">Water at (Time):</label>
-              <input type="text" class="form-control" id="plantAge" placeholder="Time to water (e.g., 6:30)">
+              <label for="plantAge">Water at (HH:MM):</label>
+              <input type="text" class="form-control" id="plantAge" placeholder="e.g., 06:30" required>
             </div>
             <div class="form-group">
-              <label for="plantBreed">Breed:</label>
-              <input type="text" class="form-control" id="plantBreed" placeholder="Enter plant breed">
+              <label for="plantBreed">Species:</label>
+              <input type="text" class="form-control" id="plantBreed" required>
             </div>
             <div class="form-group">
               <label for="plantLocation">Location:</label>
-              <input type="text" class="form-control" id="plantLocation" placeholder="Enter plant location">
+              <input type="text" class="form-control" id="plantLocation" required>
             </div>
             <div class="form-group">
               <label for="plantPicture">Picture:</label>
-              <input type="file" class="form-control" id="plantPicture">
+              <input type="file" class="form-control" id="plantPicture" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
@@ -153,10 +150,11 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS and dependencies -->
+  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="js/bootstrap.bundle.min.js"></script>
   <script src="js/web3.min.js"></script>
+  <script src="js/wallet.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
