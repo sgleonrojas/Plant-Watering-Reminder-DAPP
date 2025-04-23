@@ -29,8 +29,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -43,8 +42,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -63,8 +61,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -128,8 +125,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -142,8 +138,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_plantTokenAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"petId\",\"type\":\"uint256\"}],\"name\":\"adopt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"adopters\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAdopters\",\"outputs\":[{\"internalType\":\"address[16]\",\"name\":\"\",\"type\":\"address[16]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPlants\",\"outputs\":[{\"internalType\":\"address[16]\",\"name\":\"\",\"type\":\"address[16]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"plantId\",\"type\":\"uint256\"}],\"name\":\"handleSubmit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"plantToken\",\"outputs\":[{\"internalType\":\"contract PlantToken\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"plants\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"plantId\",\"type\":\"uint256\"}],\"name\":\"waterPlant\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Adoption.sol\":\"Adoption\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/interfaces/draft-IERC6093.sol\":{\"keccak256\":\"0x880da465c203cec76b10d72dbd87c80f387df4102274f23eea1f9c9b0918792b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://399594cd8bb0143bc9e55e0f1d071d0d8c850a394fb7a319d50edd55d9ed822b\",\"dweb:/ipfs/QmbPZzgtT6LEm9CMqWfagQFwETbV1ztpECBB1DtQHrKiRz\"]},\"@openzeppelin/contracts/token/ERC20/ERC20.sol\":{\"keccak256\":\"0x6ef9389a2c07bc40d8a7ba48914724ab2c108fac391ce12314f01321813e6368\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b7a5cb39b1e6df68f4dd9a5e76e853d745a74ffb3dfd7df4ae4d2ace6992a171\",\"dweb:/ipfs/QmPbzKR19rdM8X3PLQjsmHRepUKhvoZnedSR63XyGtXZib\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db\",\"dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9\"]},\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\":{\"keccak256\":\"0x70f2f713b13b7ce4610bcd0ac9fec0f3cc43693b043abcb8dc40a42a726eb330\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c13d13304ac79a83ab1c30168967d19e2203342ebbd6a9bbce4db7550522dcbf\",\"dweb:/ipfs/QmeN5jKMN2vw5bhacr6tkg78afbTTZUeaacNHqjWt4Ew1r\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"]},\"project:/contracts/Adoption.sol\":{\"keccak256\":\"0x3234b25c8bd178606dc817a0aab65d3845c33ba01713e8f2ad9dd739c9eb52ed\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9913ea62f6ff77042d42186364f5de3a2f56d638f476dcac04cfe04b030ef2fa\",\"dweb:/ipfs/QmabnvAaGtjQeaqdq31pYwWDRVi27fraM6ZtLdEyYJtVoD\"]},\"project:/contracts/PlantToken.sol\":{\"keccak256\":\"0xd066a94213a5c26df68302936e2b2cc92939945165d74b27eed38d5f14dc00e6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bd3b70247bac24a87e7f035dc5b7155693be2a9b969bf5d16cba23eab25471d9\",\"dweb:/ipfs/QmVCztdrfLKDAAeacpAN5dB167vPQVjEZRXsNYZ7Q8eBVz\"]}},\"version\":1}",
@@ -3927,7 +3922,7 @@
   "sourceMap": "115:1418:5:-:0;;;333:138;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;407:18;383:10;;:43;;;;;;;;;;;;;;;;;;333:138;115:1418;;88:117:8;197:1;194;187:12;334:126;371:7;411:42;404:5;400:54;389:65;;334:126;;;:::o;466:96::-;503:7;532:24;550:5;532:24;:::i;:::-;521:35;;466:96;;;:::o;568:122::-;641:24;659:5;641:24;:::i;:::-;634:5;631:35;621:63;;680:1;677;670:12;621:63;568:122;:::o;696:143::-;753:5;784:6;778:13;769:22;;800:33;827:5;800:33;:::i;:::-;696:143;;;;:::o;845:351::-;915:6;964:2;952:9;943:7;939:23;935:32;932:119;;;970:79;;:::i;:::-;932:119;1090:1;1115:64;1171:7;1162:6;1151:9;1147:22;1115:64;:::i;:::-;1105:74;;1061:128;845:351;;;;:::o;115:1418:5:-;;;;;;;",
   "deployedSourceMap": "115:1418:5:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;204:28;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;1435:96;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;139:27;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;816:183;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;172:25;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;529:250;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;1051:200;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;1296:92;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;204:28;;;;;;;;;;;;;:::o;1435:96::-;1479:18;;:::i;:::-;1516:8;1509:15;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1435:96;:::o;139:27::-;;;;;;;;;;;;;;;;;;;;;;;;;:::o;816:183::-;862:7;898:1;889:5;:10;;:24;;;;;911:2;903:5;:10;889:24;881:51;;;;;;;;;;;;:::i;:::-;;;;;;;;;960:10;942:8;951:5;942:15;;;;;;;:::i;:::-;;;;:28;;;;;;;;;;;;;;;;;;987:5;980:12;;816:183;;;:::o;172:25::-;;;;;;;;;;;;;;;;;;;;;;;;;:::o;529:250::-;604:1;593:7;:12;;:28;;;;;619:2;609:7;:12;593:28;585:57;;;;;;;;;;;;:::i;:::-;;;;;;;;;730:10;;;;;;;;;;;:21;;;752:10;764:7;730:42;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;529:250;:::o;1051:200::-;1106:7;1144:1;1133:7;:12;;:28;;;;;1159:2;1149:7;:12;1133:28;1125:57;;;;;;;;;;;;:::i;:::-;;;;;;;;;1210:10;1192:6;1199:7;1192:15;;;;;;;:::i;:::-;;;;:28;;;;;;;;;;;;;;;;;;1237:7;1230:14;;1051:200;;;:::o;1296:92::-;1338:18;;:::i;:::-;1375:6;1368:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1296:92;:::o;-1:-1:-1:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;7:126:8:-;44:7;84:42;77:5;73:54;62:65;;7:126;;;:::o;139:60::-;167:3;188:5;181:12;;139:60;;;:::o;205:142::-;255:9;288:53;306:34;315:24;333:5;315:24;:::i;:::-;306:34;:::i;:::-;288:53;:::i;:::-;275:66;;205:142;;;:::o;353:126::-;403:9;436:37;467:5;436:37;:::i;:::-;423:50;;353:126;;;:::o;485:145::-;554:9;587:37;618:5;587:37;:::i;:::-;574:50;;485:145;;;:::o;636:169::-;742:56;792:5;742:56;:::i;:::-;737:3;730:69;636:169;;:::o;811:260::-;923:4;961:2;950:9;946:18;938:26;;974:90;1061:1;1050:9;1046:17;1037:6;974:90;:::i;:::-;811:260;;;;:::o;1077:105::-;1143:6;1171:4;1161:14;;1077:105;;;:::o;1188:144::-;1286:11;1323:3;1308:18;;1188:144;;;;:::o;1338:99::-;1404:4;1427:3;1419:11;;1338:99;;;:::o;1443:96::-;1480:7;1509:24;1527:5;1509:24;:::i;:::-;1498:35;;1443:96;;;:::o;1545:108::-;1622:24;1640:5;1622:24;:::i;:::-;1617:3;1610:37;1545:108;;:::o;1659:179::-;1728:10;1749:46;1791:3;1783:6;1749:46;:::i;:::-;1827:4;1822:3;1818:14;1804:28;;1659:179;;;;:::o;1844:112::-;1913:4;1945;1940:3;1936:14;1928:22;;1844:112;;;:::o;1996:700::-;2134:53;2181:5;2134:53;:::i;:::-;2203:85;2281:6;2276:3;2203:85;:::i;:::-;2196:92;;2312:55;2361:5;2312:55;:::i;:::-;2390:7;2421:1;2406:283;2431:6;2428:1;2425:13;2406:283;;;2507:6;2501:13;2534:63;2593:3;2578:13;2534:63;:::i;:::-;2527:70;;2620:59;2672:6;2620:59;:::i;:::-;2610:69;;2466:223;2453:1;2450;2446:9;2441:14;;2406:283;;;2410:14;2110:586;;;1996:700;;:::o;2702:319::-;2843:4;2881:3;2870:9;2866:19;2858:27;;2895:119;3011:1;3000:9;2996:17;2987:6;2895:119;:::i;:::-;2702:319;;;;:::o;3108:117::-;3217:1;3214;3207:12;3354:77;3391:7;3420:5;3409:16;;3354:77;;;:::o;3437:122::-;3510:24;3528:5;3510:24;:::i;:::-;3503:5;3500:35;3490:63;;3549:1;3546;3539:12;3490:63;3437:122;:::o;3565:139::-;3611:5;3649:6;3636:20;3627:29;;3665:33;3692:5;3665:33;:::i;:::-;3565:139;;;;:::o;3710:329::-;3769:6;3818:2;3806:9;3797:7;3793:23;3789:32;3786:119;;;3824:79;;:::i;:::-;3786:119;3944:1;3969:53;4014:7;4005:6;3994:9;3990:22;3969:53;:::i;:::-;3959:63;;3915:117;3710:329;;;;:::o;4045:118::-;4132:24;4150:5;4132:24;:::i;:::-;4127:3;4120:37;4045:118;;:::o;4169:222::-;4262:4;4300:2;4289:9;4285:18;4277:26;;4313:71;4381:1;4370:9;4366:17;4357:6;4313:71;:::i;:::-;4169:222;;;;:::o;4397:118::-;4484:24;4502:5;4484:24;:::i;:::-;4479:3;4472:37;4397:118;;:::o;4521:222::-;4614:4;4652:2;4641:9;4637:18;4629:26;;4665:71;4733:1;4722:9;4718:17;4709:6;4665:71;:::i;:::-;4521:222;;;;:::o;4749:169::-;4833:11;4867:6;4862:3;4855:19;4907:4;4902:3;4898:14;4883:29;;4749:169;;;;:::o;4924:164::-;5064:16;5060:1;5052:6;5048:14;5041:40;4924:164;:::o;5094:366::-;5236:3;5257:67;5321:2;5316:3;5257:67;:::i;:::-;5250:74;;5333:93;5422:3;5333:93;:::i;:::-;5451:2;5446:3;5442:12;5435:19;;5094:366;;;:::o;5466:419::-;5632:4;5670:2;5659:9;5655:18;5647:26;;5719:9;5713:4;5709:20;5705:1;5694:9;5690:17;5683:47;5747:131;5873:4;5747:131;:::i;:::-;5739:139;;5466:419;;;:::o;5891:180::-;5939:77;5936:1;5929:88;6036:4;6033:1;6026:15;6060:4;6057:1;6050:15;6077:166;6217:18;6213:1;6205:6;6201:14;6194:42;6077:166;:::o;6249:366::-;6391:3;6412:67;6476:2;6471:3;6412:67;:::i;:::-;6405:74;;6488:93;6577:3;6488:93;:::i;:::-;6606:2;6601:3;6597:12;6590:19;;6249:366;;;:::o;6621:419::-;6787:4;6825:2;6814:9;6810:18;6802:26;;6874:9;6868:4;6864:20;6860:1;6849:9;6845:17;6838:47;6902:131;7028:4;6902:131;:::i;:::-;6894:139;;6621:419;;;:::o;7046:332::-;7167:4;7205:2;7194:9;7190:18;7182:26;;7218:71;7286:1;7275:9;7271:17;7262:6;7218:71;:::i;:::-;7299:72;7367:2;7356:9;7352:18;7343:6;7299:72;:::i;:::-;7046:332;;;;;:::o",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\nimport \"./PlantToken.sol\"; // Import PlantToken contract\n\ncontract Adoption {\n    address[16] public adopters;\n    address[16] public plants;\n\n    PlantToken public plantToken; // Declare a PlantToken instance\n\n    // Constructor to accept the PlantToken contract address\n    constructor(address _plantTokenAddress) {\n        plantToken = PlantToken(_plantTokenAddress); // Initialize the PlantToken instance\n    }\n\n    // Function to reward user for watering a plant\n    function waterPlant(uint256 plantId) external {\n        require(plantId >= 0 && plantId < 16, \"Invalid plant ID\");\n        \n        // Call the rewardUser function from the PlantToken contract\n        plantToken.rewardUser(msg.sender, plantId);\n    }\n\n    // Function to adopt a pet\n    function adopt(uint256 petId) public returns (uint256) {\n        require(petId >= 0 && petId < 16, \"Invalid pet ID\");\n        adopters[petId] = msg.sender;\n        return petId;\n    }\n\n    // Function to submit a plant interaction\n    function handleSubmit(uint256 plantId) public returns (uint256) {\n        require(plantId >= 0 && plantId < 16, \"Invalid plant ID\");\n        plants[plantId] = msg.sender;\n        return plantId;\n    }\n\n    // Function to retrieve all plants\n    function getPlants() public view returns (address[16] memory) {\n        return plants;\n    }\n\n    // Function to retrieve all adopters\n    function getAdopters() public view returns (address[16] memory) {\n        return adopters;\n    }\n}\n",
-  "sourcePath": "/workspaces/Plant-Watering-Reminder-DAPP/contracts/Adoption.sol",
+  "sourcePath": "C:\\Users\\Steph\\Downloads\\Plant-Watering-Reminder-DAPP\\contracts\\Adoption.sol",
   "ast": {
     "absolutePath": "project:/contracts/Adoption.sol",
     "exportedSymbols": {
@@ -5587,8 +5582,7 @@
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-04-03T16:22:48.921Z",
-  "networkType": "ethereum",
+  "updatedAt": "2025-04-22T23:16:41.061Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},
