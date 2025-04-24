@@ -3,27 +3,188 @@ App = {
   contracts: {},
   currentAccount: null,
   reminderInterval: null,
+  targetNetwork: '5777', // Local network ID (Ganache)
 
   init: async function () {
-    await App.initWeb3();
-    App.bindEvents();
-    App.setupModal();
-    App.startReminders();
+    try {
+      await App.initWeb3();
+      await App.initContract();
+      App.bindEvents();
+      App.setupModal();
+      App.startReminders();
+      await App.loadPlants();
+
+      // Listen for account changes
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', function (accounts) {
+          App.currentAccount = accounts[0];
+          App.updateUI();
+        });
+
+        // Listen for network changes
+        window.ethereum.on('chainChanged', function (chainId) {
+          window.location.reload();
+        });
+      }
+    } catch (error) {
+      console.error('Initialization error:', error);
+    }
+  },
+
+  updateUI: function() {
+    const walletDisplay = document.getElementById("walletAddress");
+    if (App.currentAccount) {
+      walletDisplay.innerText = `Connected: ${App.currentAccount}`;
+    } else {
+      walletDisplay.innerText = 'Not connected';
+    }
   },
 
   initWeb3: async function () {
-    if (window.ethereum) {
-      App.web3Provider = window.ethereum;
-      window.web3 = new Web3(window.ethereum);
-      try {
-        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-        App.currentAccount = accounts[0];
-        document.getElementById("walletAddress").innerText = `Connected: ${App.currentAccount}`;
-      } catch (error) {
-        console.error("User denied wallet connection", error);
+    try {
+      // Modern dapp browsers...
+      if (window.ethereum) {
+        App.web3Provider = window.ethereum;
+        try {
+          // Request account access
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+        } catch (error) {
+          // User denied account access...
+          throw new Error("User denied account access");
+        }
+        window.web3 = new Web3(window.ethereum);
       }
-    } else {
-      console.log("No Ethereum wallet detected");
+      // Legacy dapp browsers...
+      else if (window.web3) {
+        App.web3Provider = window.web3.currentProvider;
+        window.web3 = new Web3(window.web3.currentProvider);
+      }
+      // If no injected web3 instance is detected, fall back to Ganache
+      else {
+        App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
+        window.web3 = new Web3(App.web3Provider);
+      }
+
+      // Get current account
+      const accounts = await window.web3.eth.getAccounts();
+      App.currentAccount = accounts[0];
+      App.updateUI();
+
+      // Check network
+      const networkId = await window.web3.eth.net.getId();
+      
+      if (networkId.toString() !== App.targetNetwork) {
+        try {
+          // Try to switch to the correct network
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x' + parseInt(App.targetNetwork).toString(16) }],
+          });
+        } catch (switchError) {
+          // This error code indicates that the chain has not been added to MetaMask
+          if (switchError.code === 4902) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                  {
+                    chainId: '0x' + parseInt(App.targetNetwork).toString(16),
+                    chainName: 'Ganache Local',
+                    nativeCurrency: {
+                      name: 'ETH',
+                      symbol: 'ETH',
+                      decimals: 18
+                    },
+                    rpcUrls: ['http://127.0.0.1:8545'],
+                  },
+                ],
+              });
+            } catch (addError) {
+              console.error('Error adding network:', addError);
+              alert('Please add and switch to the Ganache network manually in MetaMask:\n\nNetwork Name: Ganache\nRPC URL: http://127.0.0.1:8545\nChain ID: 5777\nCurrency Symbol: ETH');
+            }
+          } else {
+            console.error('Error switching network:', switchError);
+            alert('Please switch to the Ganache network in MetaMask');
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Web3 initialization error:", error);
+      throw error;
+    }
+  },
+
+  connectWallet: async function() {
+    try {
+      if (!window.ethereum) {
+        alert("Please install MetaMask!");
+        return;
+      }
+
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts"
+      });
+
+      App.currentAccount = accounts[0];
+      App.updateUI();
+      
+      // Reload the page to reinitialize everything with the new account
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+      alert("Failed to connect wallet. Please try again.");
+    }
+  },
+
+  initContract: async function() {
+    try {
+      if (!App.currentAccount) {
+        throw new Error('Please connect your wallet first');
+      }
+
+      // Load Adoption.json
+      const response = await fetch('Adoption.json');
+      const adoptionArtifact = await response.json();
+
+      // Get the contract instance
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const networkId = parseInt(chainId, 16).toString();
+
+      if (networkId !== App.targetNetwork) {
+        throw new Error(`Please switch to the local network (Network ID: ${App.targetNetwork})`);
+      }
+
+      const deployedNetwork = adoptionArtifact.networks[App.targetNetwork];
+      if (!deployedNetwork) {
+        throw new Error(`Contract not deployed on network ${App.targetNetwork}. Please deploy the contract first.`);
+      }
+
+      // Create contract instance using window.web3
+      App.contracts.Adoption = new window.web3.eth.Contract(
+        adoptionArtifact.abi,
+        deployedNetwork.address,
+        { from: App.currentAccount }
+      );
+
+      console.log('Contract initialized:', App.contracts.Adoption);
+
+      // Initialize PlantToken contract
+      const plantTokenResponse = await fetch('PlantToken.json');
+      const plantTokenArtifact = await plantTokenResponse.json();
+      const plantTokenNetwork = plantTokenArtifact.networks[App.targetNetwork];
+      
+      if (plantTokenNetwork) {
+        App.contracts.PlantToken = new window.web3.eth.Contract(
+          plantTokenArtifact.abi,
+          plantTokenNetwork.address,
+          { from: App.currentAccount }
+        );
+      }
+    } catch (error) {
+      console.error('Error initializing contract:', error);
+      alert(error.message || 'Failed to initialize contract. Please make sure you are connected to the correct network.');
+      throw error;
     }
   },
 
@@ -49,6 +210,7 @@ App = {
   },
 
   bindEvents: function () {
+    $(document).on('click', '#connectWallet', App.connectWallet);
     $(document).on('click', '.btn-adopt', App.handleAdopt);
   },
 
@@ -88,6 +250,7 @@ App = {
         try {
           plantData.picture = reader.result;
 
+          // Save to backend first
           const saveResponse = await fetch('http://localhost:5000/add_plant', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -95,8 +258,16 @@ App = {
           });
 
           if (!saveResponse.ok) {
-            throw new Error("Failed to add plant");
+            throw new Error("Failed to add plant to backend");
           }
+
+          // Register plant in blockchain
+          if (!App.contracts.Adoption) {
+            throw new Error('Contract not initialized');
+          }
+
+          await App.contracts.Adoption.methods.registerPlant(plantData.id)
+            .send({ from: App.currentAccount });
 
           const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
           if (modal) {
@@ -110,7 +281,13 @@ App = {
           setTimeout(() => window.location.reload(), 500);
         } catch (error) {
           console.error("Error saving plant:", error);
-          alert('Failed to add plant. Please try again.');
+          if (error.message.includes('Contract not initialized')) {
+            alert('Please wait for the contract to initialize and try again.');
+          } else if (error.message.includes('Failed to add plant to backend')) {
+            alert('Failed to add plant to backend. Please try again.');
+          } else {
+            alert('Failed to register plant on blockchain. Please try again.');
+          }
         }
       };
 
@@ -129,13 +306,18 @@ App = {
       }
       const reminders = await response.json();
       
-      // Clear existing reminders
-      $('.reminder-popup').remove();
-
       if (Array.isArray(reminders)) {
+        // Clear existing reminders that are no longer active
+        const remindersList = document.getElementById('reminders-list');
+        const currentReminders = remindersList.getElementsByClassName('reminder-item');
+        const currentReminderIds = Array.from(currentReminders).map(
+          item => item.getAttribute('data-plant-id')
+        );
+        
         reminders.forEach(reminder => {
           if (reminder.account && App.currentAccount && 
-              reminder.account.toLowerCase() === App.currentAccount.toLowerCase()) {
+              reminder.account.toLowerCase() === App.currentAccount.toLowerCase() &&
+              !currentReminderIds.includes(reminder.id.toString())) {
             App.showReminder(reminder);
           }
         });
@@ -145,52 +327,108 @@ App = {
     }
   },
 
-  showReminder: function(reminder) {
-    // Create elements using safe DOM methods
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
-
-    const closeBtn = document.createElement('span');
-    closeBtn.className = 'close';
-    closeBtn.textContent = '×';
-    modalContent.appendChild(closeBtn);
-
-    const title = document.createElement('h2');
-    title.textContent = 'Plant Watering Reminder!';
-    modalContent.appendChild(title);
-
-    const plantInfo = document.createElement('p');
-    plantInfo.textContent = `Time to water your ${reminder.plantName}!`;
-    modalContent.appendChild(plantInfo);
-
-    if (reminder.imageUrl) {
-      const img = document.createElement('img');
-      // Validate image URL
-      const validUrl = new URL(reminder.imageUrl);
-      if (validUrl.protocol === 'http:' || validUrl.protocol === 'https:') {
-        img.src = reminder.imageUrl;
-        img.alt = reminder.plantName;
-        img.style.maxWidth = '200px';
-        modalContent.appendChild(img);
+  showReminder: async function (reminder) {
+    try {
+      console.log('Showing reminder for plant:', reminder);
+      const response = await fetch(`http://localhost:5000/get_plant/${reminder.id}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch plant: ${response.status} ${response.statusText}`);
       }
-    }
+      
+      const plant = await response.json();
+      console.log('Fetched plant data:', plant);
 
-    const modal = document.getElementById('reminderModal');
-    // Clear existing content
-    modal.innerHTML = '';
-    modal.appendChild(modalContent);
-    modal.style.display = 'block';
-
-    // Close button event listener
-    closeBtn.onclick = function() {
-      modal.style.display = 'none';
-    }
-
-    // Click outside to close
-    window.onclick = function(event) {
-      if (event.target === modal) {
-        modal.style.display = 'none';
+      if (!plant) {
+        console.error('Plant not found:', reminder.id);
+        return;
       }
+
+      // Create reminder element
+      const reminderElement = document.createElement('div');
+      reminderElement.className = 'reminder-item';
+      reminderElement.setAttribute('data-plant-id', plant.id);
+
+      // Add plant image
+      const plantImage = document.createElement('img');
+      plantImage.src = plant.picture;
+      plantImage.className = 'reminder-plant-image';
+      plantImage.alt = plant.name;
+
+      // Add plant info
+      const plantInfo = document.createElement('div');
+      plantInfo.className = 'reminder-plant-info';
+      plantInfo.innerHTML = `
+        <p><strong>Time to water ${plant.name} in ${plant.location}!</strong></p>
+      `;
+
+      // Add action buttons
+      const actionButtons = document.createElement('div');
+      actionButtons.className = 'reminder-actions';
+      
+      const doneButton = document.createElement('button');
+      doneButton.className = 'btn-done';
+      doneButton.textContent = 'Done';
+      doneButton.onclick = async () => {
+        try {
+          if (!App.contracts.Adoption) {
+            throw new Error('Contract not initialized');
+          }
+
+          const result = await App.contracts.Adoption.methods.waterPlant(reminder.id)
+            .send({ from: App.currentAccount });
+
+          if (result.status) {
+            reminderElement.remove();
+            alert('Plant watered successfully!');
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error("Error watering plant:", error);
+          
+          // Extract error message from contract revert
+          let errorMessage = error.message;
+          if (error.message.includes('revert')) {
+            const revertMessage = error.message.match(/revert\s(.+?)(?:\.|$)/i);
+            if (revertMessage && revertMessage[1]) {
+              errorMessage = revertMessage[1].trim();
+            }
+          }
+
+          // Handle specific error cases
+          if (errorMessage.includes('PlantDoesNotExist')) {
+            alert('This plant is not registered in the blockchain. Please register it first.');
+          } else if (errorMessage.includes('WateringCooldownNotElapsed')) {
+            alert('Please wait longer before watering this plant again.');
+          } else if (errorMessage.includes('Contract not initialized')) {
+            alert('Please wait for the contract to initialize and try again.');
+          } else {
+            alert('Failed to water plant: ' + errorMessage);
+          }
+        }
+      };
+
+      const remindLaterButton = document.createElement('button');
+      remindLaterButton.className = 'btn-remind-later';
+      remindLaterButton.textContent = 'Remind Later';
+      remindLaterButton.onclick = () => {
+        reminderElement.remove();
+      };
+
+      actionButtons.appendChild(doneButton);
+      actionButtons.appendChild(remindLaterButton);
+
+      // Assemble the reminder element
+      reminderElement.appendChild(plantImage);
+      reminderElement.appendChild(plantInfo);
+      reminderElement.appendChild(actionButtons);
+
+      // Add to reminders list
+      const remindersList = document.getElementById('reminders-list');
+      remindersList.appendChild(reminderElement);
+    } catch (error) {
+      console.error("Error showing reminder:", error);
+      alert('Failed to load plant details. Please try again.');
     }
   },
 
@@ -220,6 +458,86 @@ App = {
     if (App.reminderInterval) {
       clearInterval(App.reminderInterval);
     }
+  },
+
+  loadPlants: async function() {
+    try {
+      console.log('Fetching plants...');
+      const response = await fetch('http://localhost:5000/get_plants');
+      if (!response.ok) {
+        throw new Error('Failed to fetch plants');
+      }
+      const plants = await response.json();
+      console.log('Received plants:', plants);
+      
+      // Clear existing plants
+      const plantsRow = document.getElementById('petsRow');
+      if (!plantsRow) {
+        console.error('Could not find petsRow element');
+        return;
+      }
+      plantsRow.innerHTML = '';
+
+      // Display each plant
+      let displayedCount = 0;
+      plants.forEach(plant => {
+        console.log('Checking plant:', plant.name, 'Account:', plant.account, 'Current:', App.currentAccount);
+        if (plant.account && App.currentAccount && 
+            plant.account.toLowerCase() === App.currentAccount.toLowerCase()) {
+          App.displayPlant(plant);
+          displayedCount++;
+        }
+      });
+      console.log('Displayed', displayedCount, 'plants');
+    } catch (error) {
+      console.error('Error loading plants:', error);
+    }
+  },
+
+  displayPlant: function(plant) {
+    const plantsRow = document.getElementById('petsRow');
+    
+    const plantCol = document.createElement('div');
+    plantCol.className = 'col-sm-6 col-md-4 col-lg-3 mb-4';
+
+    const card = document.createElement('div');
+    card.className = 'card h-100';
+
+    const img = document.createElement('img');
+    img.className = 'card-img-top';
+    img.src = plant.picture;
+    img.alt = plant.name;
+    img.style.height = '200px';
+    img.style.objectFit = 'cover';
+
+    const cardBody = document.createElement('div');
+    cardBody.className = 'card-body';
+
+    const title = document.createElement('h5');
+    title.className = 'card-title';
+    title.textContent = plant.name;
+
+    const speciesText = document.createElement('p');
+    speciesText.className = 'card-text';
+    speciesText.textContent = `Species: ${plant.species}`;
+
+    const locationText = document.createElement('p');
+    locationText.className = 'card-text';
+    locationText.textContent = `Location: ${plant.location}`;
+
+    const scheduleText = document.createElement('p');
+    scheduleText.className = 'card-text';
+    scheduleText.textContent = `Watering Time: ${plant.schedule}`;
+
+    cardBody.appendChild(title);
+    cardBody.appendChild(speciesText);
+    cardBody.appendChild(locationText);
+    cardBody.appendChild(scheduleText);
+
+    card.appendChild(img);
+    card.appendChild(cardBody);
+    plantCol.appendChild(card);
+    plantsRow.appendChild(plantCol);
   }
 };
 

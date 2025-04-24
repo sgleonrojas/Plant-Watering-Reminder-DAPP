@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "module": "node16",
+    "target": "ES2022",
+    "module": "ES2022",
     "lib": ["ES2022"],
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
     "rootDir": ".",
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,
@@ -25,3 +25,7 @@
   },
   "include": ["src/**/*"]
 }
+// This file is used to configure TypeScript for the backend of the application.
+// It specifies the compiler options and the files to include in the compilation.
+// The options include the target ECMAScript version, module system, and various strictness checks.
+// The "include" section specifies that all TypeScript files in the "src" directory should be included in the compilation.

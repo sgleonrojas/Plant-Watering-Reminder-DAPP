@@ -1,7 +1,7 @@
 {
   "name": "pet-shop",
   "version": "1.0.0",
-  "description": "",
+  "description": "full video of project working:: https://drive.google.com/file/d/1oTL4EcHda_3ZBpOa5q-S0JWui5UONvwQ/view?usp=sharing",
   "main": "truffle.js",
   "directories": {
     "test": "test"
@@ -16,10 +16,11 @@
     "lite-server": "^2.3.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.2.0",
+    "@openzeppelin/contracts": "^4.9.3",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "web3": "^4.16.0"
-  }
+  },
+  "keywords": []
 }
