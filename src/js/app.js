@@ -13,19 +13,6 @@ App = {
       App.setupModal();
       App.startReminders();
       await App.loadPlants();
-
-      // Listen for account changes
-      if (window.ethereum) {
-        window.ethereum.on('accountsChanged', function (accounts) {
-          App.currentAccount = accounts[0];
-          App.updateUI();
-        });
-
-        // Listen for network changes
-        window.ethereum.on('chainChanged', function (chainId) {
-          window.location.reload();
-        });
-      }
     } catch (error) {
       console.error('Initialization error:', error);
     }
@@ -42,17 +29,14 @@ App = {
 
   initWeb3: async function () {
     try {
-      // Modern dapp browsers...
       if (window.ethereum) {
         App.web3Provider = window.ethereum;
-        try {
-          // Request account access
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-        } catch (error) {
-          // User denied account access...
-          throw new Error("User denied account access");
-        }
         window.web3 = new Web3(window.ethereum);
+        
+        // Request account access
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        App.currentAccount = accounts[0];
+        App.updateUI();
       }
       // Legacy dapp browsers...
       else if (window.web3) {
@@ -63,51 +47,6 @@ App = {
       else {
         App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545');
         window.web3 = new Web3(App.web3Provider);
-      }
-
-      // Get current account
-      const accounts = await window.web3.eth.getAccounts();
-      App.currentAccount = accounts[0];
-      App.updateUI();
-
-      // Check network
-      const networkId = await window.web3.eth.net.getId();
-      
-      if (networkId.toString() !== App.targetNetwork) {
-        try {
-          // Try to switch to the correct network
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x' + parseInt(App.targetNetwork).toString(16) }],
-          });
-        } catch (switchError) {
-          // This error code indicates that the chain has not been added to MetaMask
-          if (switchError.code === 4902) {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [
-                  {
-                    chainId: '0x' + parseInt(App.targetNetwork).toString(16),
-                    chainName: 'Ganache Local',
-                    nativeCurrency: {
-                      name: 'ETH',
-                      symbol: 'ETH',
-                      decimals: 18
-                    },
-                    rpcUrls: ['http://127.0.0.1:8545'],
-                  },
-                ],
-              });
-            } catch (addError) {
-              console.error('Error adding network:', addError);
-              alert('Please add and switch to the Ganache network manually in MetaMask:\n\nNetwork Name: Ganache\nRPC URL: http://127.0.0.1:8545\nChain ID: 5777\nCurrency Symbol: ETH');
-            }
-          } else {
-            console.error('Error switching network:', switchError);
-            alert('Please switch to the Ganache network in MetaMask');
-          }
-        }
       }
     } catch (error) {
       console.error("Web3 initialization error:", error);
@@ -144,7 +83,7 @@ App = {
       }
 
       // Load Adoption.json
-      const response = await fetch('Adoption.json');
+      const response = await fetch('build/contracts/Adoption.json');
       const adoptionArtifact = await response.json();
 
       // Get the contract instance
@@ -170,7 +109,7 @@ App = {
       console.log('Contract initialized:', App.contracts.Adoption);
 
       // Initialize PlantToken contract
-      const plantTokenResponse = await fetch('PlantToken.json');
+      const plantTokenResponse = await fetch('build/contracts/PlantToken.json');
       const plantTokenArtifact = await plantTokenResponse.json();
       const plantTokenNetwork = plantTokenArtifact.networks[App.targetNetwork];
       
@@ -462,13 +401,15 @@ App = {
 
   loadPlants: async function() {
     try {
-      console.log('Fetching plants...');
+      console.log('Starting loadPlants function...');
+      console.log('Current account:', App.currentAccount);
+      
       const response = await fetch('http://localhost:5000/get_plants');
       if (!response.ok) {
-        throw new Error('Failed to fetch plants');
+        throw new Error(`Failed to fetch plants: ${response.status} ${response.statusText}`);
       }
       const plants = await response.json();
-      console.log('Received plants:', plants);
+      console.log('All plants received from backend:', plants);
       
       // Clear existing plants
       const plantsRow = document.getElementById('petsRow');
@@ -481,20 +422,35 @@ App = {
       // Display each plant
       let displayedCount = 0;
       plants.forEach(plant => {
-        console.log('Checking plant:', plant.name, 'Account:', plant.account, 'Current:', App.currentAccount);
+        console.log('Checking plant:', {
+          name: plant.name,
+          plantAccount: plant.account,
+          currentAccount: App.currentAccount,
+          isMatch: plant.account && App.currentAccount && 
+                   plant.account.toLowerCase() === App.currentAccount.toLowerCase()
+        });
+        
         if (plant.account && App.currentAccount && 
             plant.account.toLowerCase() === App.currentAccount.toLowerCase()) {
           App.displayPlant(plant);
           displayedCount++;
         }
       });
-      console.log('Displayed', displayedCount, 'plants');
+      
+      console.log(`Displayed ${displayedCount} plants`);
+      
+      if (displayedCount === 0) {
+        plantsRow.innerHTML = '<div class="col-12 text-center"><p>No plants found for your account. Try registering a new plant!</p></div>';
+      }
     } catch (error) {
       console.error('Error loading plants:', error);
+      document.getElementById('petsRow').innerHTML = 
+        '<div class="col-12 text-center"><p>Error loading plants. Please make sure the backend server is running.</p></div>';
     }
   },
 
   displayPlant: function(plant) {
+    console.log('Displaying plant:', plant);
     const plantsRow = document.getElementById('petsRow');
     
     const plantCol = document.createElement('div');
@@ -538,6 +494,7 @@ App = {
     card.appendChild(cardBody);
     plantCol.appendChild(card);
     plantsRow.appendChild(plantCol);
+    console.log('Plant display element added to DOM');
   }
 };
 
