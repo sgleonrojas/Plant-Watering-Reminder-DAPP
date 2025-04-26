@@ -3,7 +3,7 @@ App = {
   contracts: {},
   currentAccount: null,
   reminderInterval: null,
-  targetNetwork: '5777', // Local network ID (Ganache)
+  targetNetwork: '1337', // Local network ID (Ganache)
 
   init: async function () {
     try {
