@@ -1,4 +1,6 @@
 
 .gitattributes
 .gitattributes
+api-gateway/node_modules
 node_modules
+backend/package-lock.json

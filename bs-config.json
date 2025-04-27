@@ -1,5 +1,9 @@
 {
+  "port": 3000,
   "server": {
-    "baseDir": ["./src", "./build/contracts"]
+    "baseDir": ["./src", "./build/contracts"],
+    "routes": {
+      "/build/contracts": "./build/contracts"
+    }
   }
 }
