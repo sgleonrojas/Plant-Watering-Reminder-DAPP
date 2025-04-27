@@ -6,6 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "rootDir": "src", // Updated rootDir to "src"
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
@@ -19,8 +20,9 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "strictNullChecks": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
-} 
+  "include": ["src/**/*", "tsconfig.json"], // Ensure this matches your source files
+  "exclude": ["dist"] // Ensure this matches your output directory
+}
